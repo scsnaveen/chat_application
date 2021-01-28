@@ -1,0 +1,17 @@
+<div class="container ">
+<div class="col-md-6 mx-auto mb-5">
+
+<%= form_with url:post_create_path, local: true do |f| %>
+	<%= f.text_area :post %><%= f.submit 'Post' %>
+<% end %>
+</div>
+</div>
+<div class="container">
+	<div class="col-md-6 mx-auto mb-5">
+	<%Post.all.each do |p|%>
+
+	<%= p.post%>
+	<br>
+	<%end%>
+</div>
+</div>

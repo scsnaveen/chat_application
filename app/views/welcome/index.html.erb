@@ -1,0 +1,49 @@
+<ul>
+  <li><a href="#">Home</a></li>
+  <li><a href="#">friends</a></li>
+  <li><a href="#">messages</a></li>
+  <li><%= link_to "Post",post_new_path%></li>
+  <%if current_user.present?%>
+  <li class="right"><%= link_to "profile",edit_user_registration_path%></li>
+  <li class="right"><%= link_to "sign out",destroy_user_session_path%></li>
+  <%else%>
+  <li class="right"><%= link_to "sign up",new_user_registration_path%></li>
+  <li class="right"><%= link_to "sign in",new_user_session_path%></li>
+  <%end%>
+</ul>
+<br>
+<%=render 'post/form'%>
+
+
+<style type="text/css">
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+}
+
+li {
+  float: left;
+}
+
+li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+/* Change the link color to #111 (black) on hover */
+li a:hover {
+  background-color: #111;
+}
+.right {float: right;}
+ textarea {
+  border: 1px solid #bbb;
+  width: 100%;
+  margin-bottom: 15px;
+}
+</style>
