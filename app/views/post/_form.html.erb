@@ -1,17 +1,10 @@
-<div class="container ">
+<div class="container " >
 <div class="col-md-6 mx-auto mb-5">
 
 <%= form_with url:post_create_path, local: true do |f| %>
-	<%= f.text_area :post %><%= f.submit 'Post' %>
+	<%= f.text_area :post ,class: "form-control" %>
+	<%= f.file_field :profile_pic%>
+	<%= f.submit 'Post', class: "btn btn-success" %>
 <% end %>
-</div>
-</div>
-<div class="container">
-	<div class="col-md-6 mx-auto mb-5">
-	<%Post.all.each do |p|%>
-
-	<%= p.post%>
-	<br>
-	<%end%>
 </div>
 </div>

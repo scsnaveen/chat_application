@@ -29,15 +29,12 @@ module Devise # :nodoc:
           self.gauth_tmp
         end
 
-        
-
         def validate_token(token)
-          puts "--------------"
           return false if self.gauth_tmp_datetime.nil?
           if self.gauth_tmp_datetime < self.class.ga_timeout.ago
             return false
           else
-            otp_backup_codes =[]
+
             valid_vals = []
             valid_vals << ROTP::TOTP.new(self.get_qr).at(Time.now)
             (1..self.class.ga_timedrift).each do |cc|
@@ -47,11 +44,6 @@ module Devise # :nodoc:
 
             if valid_vals.include?(token.to_i)
               return true
-            elsif otp_backup_codes.include?(token.to_i)
-              return true
-             elsif valid_vals.include?(token.to_i) || otp_backup_codes.include?(token.to_i)
-
-
             else
               return false
             end
@@ -65,7 +57,7 @@ module Devise # :nodoc:
               return true
             else
               return false
-            end 
+            end
           # Mongoid does NOT have a .to_i for the Boolean return value, hence, we can just return it
           else
             return self.gauth_enabled

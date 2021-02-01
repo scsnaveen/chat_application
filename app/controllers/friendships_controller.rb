@@ -1,46 +1,66 @@
 class FriendshipsController < ApplicationController
-	include ApplicationHelper
+	before_action :authenticate_user!
+			def index
+				@user = current_user
+				@friends = @user.friends
+				@requests = @user.requested_friends
+				@pending = @user.pending_friends
+				@blocked= @user.blocked_friends
+		end
 
-  def create
-    return if current_user.id == params[:user_id] # Disallow the ability to send yourself a friend request
-    # Disallow the ability to send friend request more than once to same person
-    return if friend_request_sent?(User.find(params[:user_id]))
-    # Disallow the ability to send friend request to someone who already sent you one
-    return if friend_request_received?(User.find(params[:user_id]))
+		def create        
+				@user = current_user
+				friend = User.find_by(id: params[:id])
+				@user.friend_request(friend)
+				UserMailer.friend_request_mail(friend).deliver
+				redirect_to friendships_path
+		end
 
-    @user = User.find(params[:user_id])
-    @friendship = current_user.friend_sent.build(sent_to_id: params[:user_id])
-    if @friendship.save
-      flash[:success] = 'Friend Request Sent!'
-      @notification = new_notification(@user, @current_user.id, 'friendRequest')
-      @notification.save
-    else
-      flash[:danger] = 'Friend Request Failed!'
-    end
-    redirect_back(fallback_location: root_path)
-  end
+		def add
+				@user = current_user
+				friend = User.find_by(id: params[:id])
+				@user.accept_request(friend)
+				redirect_to friendships_path
+		end
 
-  def accept_friend
-    @friendship = Friendship.find_by(sent_by_id: params[:user_id], sent_to_id: current_user.id, status: false)
-    return unless @friendship # return if no record is found
+		def block
+				@user = current_user
+				friend = User.find_by(id: params[:id])
+				@user.block_friend(friend)
 
-    @friendship.status = true
-    if @friendship.save
-      flash[:success] = 'Friend Request Accepted!'
-      @friendship2 = current_user.friend_sent.build(sent_to_id: params[:user_id], status: true)
-      @friendship2.save
-    else
-      flash[:danger] = 'Friend Request could not be accepted!'
-    end
-    redirect_back(fallback_location: root_path)
-  end
+				redirect_to friendships_path
+		end
+		def unblock
+			@user = current_user
+				friend = User.find_by(id: params[:id])
+				@user.unblock_friend(friend)
 
-  def decline_friend
-    @friendship = Friendship.find_by(sent_by_id: params[:user_id], sent_to_id: current_user.id, status: false)
-    return unless @friendship # return if no record is found
+				redirect_to friendships_path
+		end
+		def reject
+				@user = current_user
+				friend = User.find_by(id: params[:id])
+				@user.decline_request(friend)
 
-    @friendship.destroy
-    flash[:success] = 'Friend Request Declined!'
-    redirect_back(fallback_location: root_path)
-  end
+				redirect_to friendships_path
+		end
+
+		def remove
+				@user = current_user
+				friend = User.find_by(id: params[:id])
+				@user.remove_friend(friend)
+
+				redirect_to user_path(friend)
+		end
+
+		def search
+				@search = params[:search].downcase
+				@results = User.all.select do |user|
+						user.user_name.downcase.include?(@search)
+				end
+		end
+
+		def show
+				
+		end
 end

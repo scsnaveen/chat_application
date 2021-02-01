@@ -53,13 +53,14 @@ end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 gem 'devise'
-# gem 'bootstrap-sass', '~> 3.3.6'
+   # gem 'bootstrap-sass', '~> 3.3.6'
 gem 'jquery-rails'
 gem 'sidekiq'
 gem 'carrierwave', '~> 2.0'
 gem "rmagick"
- gem 'bootstrap', '~> 5.0.0.beta1'
+gem 'bootstrap', '~> 5.0.0.beta1'
 gem 'rails_admin', '~> 2.0'
+gem 'paper_trail'
 gem 'cancancan'
 gem 'devise_google_authenticator', :path => 'lib/devise_google_authenticator', :require => 'devise_google_authenticator'
 gem 'has_friendship', :path => 'lib/has_friendship', :require => 'has_friendship'

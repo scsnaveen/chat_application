@@ -23,9 +23,9 @@
     <%= f.text_field :user_name, autofocus: true %>
   </div><br>
   <div class=" custom-select custom-select-lg mb-3">
-      <%= f.label :date_of_birth %><br>
+      <%= f.label :date_of_birth %><br />
         <%= f.date_select :date_of_birth,start_year: 1995  %>
-  </div><br />
+  </div><br>
   <div class="field">
     <%= f.label :email %><br />
     <%= f.email_field :email, autofocus: true, autocomplete: "email" %>

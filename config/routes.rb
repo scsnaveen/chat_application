@@ -1,13 +1,12 @@
 Rails.application.routes.draw do
+  # devise_for :admins
   get 'post/new'
   get 'post/index'
   get 'post/delete'
   post 'post/create'
+  get 'users/my_profile'
   mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
   # devise_for :users
- get 'friendships/create'
- get 'friendships/accept_friend'
- get 'friendships/decline_friend'
 
   get 'welcome/index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
@@ -18,6 +17,23 @@ Rails.application.routes.draw do
   	:confirmations => "users/confirmations",
   	:passwords =>"users/passwords"
   }
+   post "/friendships/add" => "friendships/add"
+  post "/friendships/reject" => "friendships/reject"
+  post "/friendships/remove" => "friendships/remove"
+  get "/friendships/search" => "friendships/search"
+  post "/friendships/search" => "friendships/search"
+  post "/friendships/block"=>"friendships/block"
+  post "/friendships/unblock"=>"friendships/unblock"
+    resources :friendships, only: [:index, :create]
+    resources :conversations, only: [:create] do
+      member do
+          post :close
+      end
+    resources :messages, only: [:create]
+  end
+   get 'users/show',as: :user
+  # get "friendships/index"
+  # post "friendships/create" 
   namespace :admin do
     get 'dashboard/index'
     get 'users/sign_in'

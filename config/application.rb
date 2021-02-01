@@ -1,6 +1,7 @@
 require_relative 'boot'
 
 require 'rails/all'
+require "action_cable/engine"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -15,7 +16,7 @@ module ChatApp
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading
     # the framework and any gems in your application.
-    config.action_cable.mount_path = '/websocket'
-            config.active_job.queue_adapter = :sidekiq
+     config.action_cable.mount_path = '/cable'
+             # config.active_job.queue_adapter = :sidekiq
   end
 end
