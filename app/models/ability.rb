@@ -1,48 +1,46 @@
 # frozen_string_literal: true
+require 'rails_admin/main_controller'
+
+module RailsAdmin
+
+	class MainController < RailsAdmin::ApplicationController
+		# rescue for the admins who cannot access  
+		rescue_from CanCan::AccessDenied do |exception|
+			redirect_to rails_admin.dashboard_path
+			flash[:alert] = 'Access denied.'
+		end
+	end
+end
 
 class Ability
-  include CanCan::Ability
+	include CanCan::Ability
 
-  # def initialize(admin)
-  #   # Define abilities for the passed in user here. For example:
-  #   if admin
-  #       can :access, :rails_admin
-  #       can :dashboard 
-  #       can [:read], :all
-  #   #   user ||= User.new # guest user (not logged in)
-  #     if admin.role.role_name == "super_admin"
-  #       can :manage, :all
-  #       can :dashboard
-  #     else
-  #       can :manage, :all
-  #       can :dashboard
-  #       can :read, :all
-  #     end
-  #   end
-  #   def initialize(user)
-  #       if user
-  #       can :access, :rails_admin
-  #       can :dashboard 
-  #       can [:read], :all
-  #       end
-  #   end 
-  #   #
-  #   # The first argument to `can` is the action you are giving the user
-  #   # permission to do.
-  #   # If you pass :manage it will apply to every action. Other common actions
-  #   # here are :read, :create, :update and :destroy.
-  #   #
-  #   # The second argument is the resource the user can perform the action on.
-  #   # If you pass :all it will apply to every resource. Otherwise pass a Ruby
-  #   # class of the resource.
-  #   #
-  #   # The third argument is an optional hash of conditions to further filter the
-  #   # objects.
-  #   # For example, here the user can only update published articles.
-  #   #
-  #   #   can :update, Article, :published => true
-  #   #
-  #   # See the wiki for details:
-  #   # https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities
-  # end
+	def initialize(admin)
+		if admin
+			can :access, :rails_admin
+			can :dashboard ,:all
+			can :read, :dashboard
+			
+			# Super Admin can manage all
+			if admin.role.role_name == "super_admin"
+				can :manage, :all
+
+			#Admin can access which are allowed by super admin
+			elsif admin.role.role_name == "admin"
+
+				can :online_members,:all 
+				can :create,Admin.create_model_array(admin.id)
+				can :read,Admin.read_model_array(admin.id)
+				can :update,Admin.update_model_array(admin.id)
+				can :destroy,Admin.delete_model_array(admin.id)
+
+			#executive can access which are allowed by super admin
+			elsif  admin.role.role_name == "executive"
+				can :create,Admin.create_model_array(admin.id)
+				can :read,Admin.read_model_array(admin.id)
+				can :update,Admin.update_model_array(admin.id)
+				can :destroy,Admin.delete_model_array(admin.id)
+			end
+		end
+	end
 end

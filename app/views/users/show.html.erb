@@ -1,66 +1,77 @@
-<main class="ui teal raised very padded text container segment">
-    <section class="ui basic segment">
-        <div class="ui basic clearing segment">
-            <h1 class="ui left floated header">
-                <%=@user.user_name%>
-            </h1>
-            <img class="ui small circular left floated image" src="<%=@user.profile_pic_url(:thumb).to_s %>" alt="<%=@user.user_name%>">
-            <% if current_user.friends_with?(@user) %>
-                <h4 class="ui green right floated header">Friends</h4>
-                <% end %>
-        </div>
-        <div class="ui basic segment">
-            <h4 class="ui small header">
-                <%=@user.email%>
-            </h4>
-        </div>
-        <div class="ui basic segment">
-        <%= render 'post/form'%>
-        </div>
-        <% if @user.friend_requests? %>
-                <div class="ui vertical clearing segment">
-                    <header class="ui basic segment">
-                        <h3 class="ui header">Friend Requests:</h3>
-                    </header>
-                            <div class="ui basic segment">
-                                <%= form_tag ({controller: 'friendships', action: 'reject', method: 'post', id: @user.id}) do %>
-                                    <input class="ui basic tiny left floated negative button" type=submit value='Cancel Request '>
-                                <% end %>
-                            </div>
-                </div>
-            <%end%>
-    </section>
-
-    <% if current_user.id == @user.id %>
-        <div class="ui basic segment">
-            <%= form_for(@user) do |f| %>
-            <%= f.file_field :profile_pic %>
-            <div class="actions">
-            <%= f.submit %>
-            </div>
-            <% end %>
-            <a class="ui tiny basic positive button" href="/users/<%=@user.id%>/edit">Edit Profile</a>
-            <a class="ui tiny negative basic right floated button" data-confirm="Are you sure?" rel="nofollow" data-method="delete" href="/users/<%=@user.id%>">Delete Profile</a>
-        </div>
-        <% end %>
-            <% if current_user.friends_with?(@user) %>
-                <div class="ui basic segment">
-                    <%= form_tag ({controller: 'friendships', action: 'remove', method: 'post', :id => @user.id}) do %>
-                        <input class="ui basic tiny negative button" type=submit value='Unfriend'>
-                        <% end %>
-                </div>
-                <div class="ui basic segment">
-                            <%= form_tag ({controller: 'friendships', action: 'block', method: 'post', :id=> @user.id}) do %>
-                                <input class="ui basic positive button" type=submit value='block'>
-                                <% end %>
-                        </div>
-                <% end %>
-                    <% if current_user.not_friends.include?(@user) %>
-                        <div class="ui basic segment">
-                            <%= form_tag ({controller: 'friendships', action: 'create', method: 'post', :id=> @user.id}) do %>
-                                <input class="ui basic positive button" type=submit value='Send Friend Request'>
-                                <% end %>
-                        </div>
-                        <% end %>
-
-</main>
+<div class="container">
+	<div class="row">
+		<div class ="col-md-2">
+			<h1><%=@user.user_name%></h1>
+			<img class="rounded-circle user_img" src="<%=@user.profile_pic_url.to_s %>" alt="<%=@user.user_name%>">
+			<div >
+				<h4 >
+					<%=@user.email%>
+				</h4>
+			</div>
+			<% if current_user.friends_with?(@user) %>
+				<div >
+					<%= form_tag ({controller: 'friendships', action: 'remove', method: 'post', :id => @user.id}) do %>
+							<input  type=submit value='Unfriend'>
+						<% end %>
+				</div>
+				<div >
+					<%= form_tag ({controller: 'friendships', action: 'block', method: 'post', :id=> @user.id}) do %>
+						<input  type=submit value='block'>
+					<% end %>
+				</div>
+			<% end %>
+			<% if @user.friend_requests? %>
+				<div>
+					<div>
+						<%= form_tag ({controller: 'friendships', action: 'reject', method: 'post', id: @user.id}) do %>
+							<input  type=submit value='Cancel Request '>
+						<% end %>
+					</div>
+				</div>
+			<%end%> 
+			<% if current_user.not_friends.include?(@user) %>
+				<div >
+					<%= form_tag ({controller: 'friendships', action: 'create', method: 'post', :id=> @user.id}) do %>
+						<input type=submit value='Send Friend Request'>
+						<% end %>
+				</div>
+			<% end %>
+		</div>
+		<div class="col-md-10", style ="width: 60%;">
+			<%= render 'post/form'%>
+			<div >
+				<%@user.posts.each do |post|%>
+					<div class="card" style="min-height:100px">
+						<h5><img class="rounded-circle user_img" src="<%=User.find_by(:id=>post.user_id).profile_pic_url.to_s %>" alt="Blank"><%=link_to User.find_by(:id=>post.user_id).user_name,user_path(:id=>post.user_id) %></h5>
+						<div class="card">
+							<h3><%= post.post%></h3>
+						</div>
+							<span><%= post.created_at.to_formatted_s(:short)%></span>
+					</div>
+					<br>
+					<%end%>
+			</div>
+		</div>
+		<div class="col-md-2">
+			Friends
+		<ul>
+		<%@user.friends.each do |friend|%>
+		<li>
+			<img class="rounded-circle user_img" src="<%=friend.profile_pic_url.to_s %>" alt="<%=friend.user_name%>">
+			<span class="ui header">
+				<%=link_to  friend.user_name,user_path(:id=>friend.id) %>
+			</span>
+		</li>
+		<%end%>
+		</div>
+	</div>          
+</div>
+<style type="text/css">
+.user_img{
+	  height: 50px;
+	  width: 50px;
+	  border:1.5px solid #f5f6fa;
+	
+	}
+	
+</style>

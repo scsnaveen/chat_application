@@ -1,40 +1,33 @@
 class UsersController < ApplicationController
-	def index
-    @users = User.all
-    @friends = current_user.friends
-    @pending_requests = current_user.pending_requests
-    @friend_requests = current_user.received_requests
-  end
+	 before_action :authenticate_user!
 
-  def show
-    @user = User.find(params[:id])
-  end
-  def my_profile
-    @user = current_user
-  end
+	def edit
+		@user= User.find(params[:id])
+	end
 
-  def update_img
-    @user = User.find(params[:id])
-    unless current_user.id == @user.id
-      redirect_back(fallback_location: users_path(current_user))
-      return
-    end
+	# showing all the users profile 
+	def show
+		@user = User.find(params[:id])
+	end
 
-    image = params[:user][:image] unless params[:user].nil?
-    if image
-      @user.image = image
-      if @user.save
-        flash[:success] = 'Image uploaded'
-      else
-        flash[:danger] = 'Image uploaded failed'
-      end
-    end
-    redirect_back(fallback_location: root_path)
-  end
+	# viewing the user profile 
+	def my_profile
+		@user = current_user
+		@posts =current_user.posts
+		@friends =current_user.friends
+	end
 
-  # Modifies current user's notice_seen column to true
-  def saw_notification
-    current_user.notice_seen = true
-    current_user.save
-  end
+	# updating profile image
+	def update
+		@user = current_user
+		@user.profile_pic = params[:user][:profile_pic]
+		if @user.profile_pic.size > 1.megabytes
+			redirect_to users_my_profile_path
+			flash[:alert] = " Profile pic should be less than 1MB"
+		else
+			@user.save(validate: false)
+			redirect_to users_my_profile_path
+		end
+	end
+
 end

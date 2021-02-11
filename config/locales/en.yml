@@ -31,3 +31,10 @@
 
 en:
   hello: "Hello world"
+  admin:
+    actions:
+      online_members:
+        title: "online members"
+        menu:  "online members"
+        breadcrumb:   "online members"
+      

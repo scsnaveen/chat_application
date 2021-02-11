@@ -1,11 +1,14 @@
+<div class="container">
 <h2>Edit <%= resource_name.to_s.humanize %></h2>
 
 <%= form_for(resource, as: resource_name, url: registration_path(resource_name), html: { method: :put }) do |f| %>
   <%= render "users/shared/error_messages", resource: resource %>
   <div class="field">
     
-    <%= image_tag("http://localhost:5002"+current_user.profile_pic_url(:thumb)).to_s %>
+   <% if current_user.profile_pic.present? %>
+   <%= image_tag("http://localhost:5002"+current_user.profile_pic_url(:thumb)).to_s %>
     <%= f.file_field :profile_pic %>
+    <%end%> 
     
   </div>
   <div class="field">
@@ -65,6 +68,4 @@
 <p>Unhappy? <%= button_to "Cancel my account", registration_path(resource_name), data: { confirm: "Are you sure?" }, method: :delete %></p>
 
 <%= link_to "Back", :back %>
-<div class="container">
- <%= link_to "QR code", user_displayqr_path %>
-</div>
+

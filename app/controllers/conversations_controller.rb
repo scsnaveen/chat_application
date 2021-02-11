@@ -1,34 +1,46 @@
 class ConversationsController < ApplicationController
-  # creating a conversation 
-  def create
+		before_action :authenticate_user!
 
-    @conversation = Conversation.get(current_user.id, params[:user_id])
-    # verifying if a conversation is present else it will create new session
-    add_to_conversations unless conversated?
+	# creating a conversation 
+	def create
 
-    respond_to do |format|
-      format.js
-    end
-  end
-  def close
-    @conversation = Conversation.find(params[:id])
+		@conversation = Conversation.get(current_user.id, params[:user_id])
+		# verifying if a conversation is present else it will create new session
+		add_to_conversations unless conversated?
 
-    session[:conversations].delete(@conversation.id)
+		respond_to do |format|
+			format.js
+		end
+	end
 
-    respond_to do |format|
-      format.js
-    end
-  end
+	# closing the conversation
+	def close
+		@conversation = Conversation.find(params[:id])
 
-  private
-  #creates a session for a conversation
-  def add_to_conversations
-    session[:conversations] ||= []
-    session[:conversations] << @conversation.id
-  end
+		session[:conversations].delete(@conversation.id)
 
-  def conversated?
-    session[:conversations].include?(@conversation.id)
-  end
+		respond_to do |format|
+			format.js
+		end
+	end
+
+	# indexing all the conversations between friends 
+	def index
+		session[:conversations] ||= []
+
+		@users = current_user.friends
+		@conversations = Conversation.includes(:recipient, :messages).find(session[:conversations])
+	end
+
+	private
+	#creates a session for a conversation
+	def add_to_conversations
+		session[:conversations] ||= []
+		session[:conversations] << @conversation.id
+	end
+ 
+	def conversated?
+		session[:conversations].include?(@conversation.id)
+	end
 
 end

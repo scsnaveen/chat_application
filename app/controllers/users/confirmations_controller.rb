@@ -16,11 +16,6 @@ class Users::ConfirmationsController < Devise::ConfirmationsController
   #   super
   # end
 
-  # sending a welcome mail after the confirmation
-  def after_confirmation
-    UserMailer.welcome_email(self).deliver
-  end
-
   # protected
 
   # The path used after resending confirmation instructions.
