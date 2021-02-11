@@ -64,5 +64,6 @@ gem 'paper_trail'
 gem 'cancancan'
 gem 'devise_google_authenticator', :path => 'lib/devise_google_authenticator', :require => 'devise_google_authenticator'
 gem 'has_friendship', :path => 'lib/has_friendship', :require => 'has_friendship'
-
+# gem 'omniauth', '~> 1.6', '>= 1.6.1'
+# gem 'omniauth-facebook'
 
